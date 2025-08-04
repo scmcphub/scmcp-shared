@@ -50,14 +50,12 @@ async def run_tool(
     """run the tool with the given name and parameters. Only start call the tool when last tool is finished."""
     ctx = get_context()
     fastmcp = ctx.fastmcp
-    all_tools = fastmcp._tool_manager._all_tools
-    auto_tools = fastmcp._tool_manager._tools
-    fastmcp._tool_manager._tools = all_tools
+    fastmcp._tool_manager._tools[name].enable()
 
     try:
         result = await fastmcp._tool_manager.call_tool(name, parameter)
     except Exception as e:
-        fastmcp._tool_manager._tools = auto_tools
         result = {"error": str(e)}
-    fastmcp._tool_manager._tools = auto_tools
+    finally:
+        fastmcp._tool_manager._tools[name].disable()
     return result

@@ -113,19 +113,14 @@ class MCPCLI:
                     backend=backend,
                     exclude_tags=["nb", "rag", "kb", "util"],
                 ).mcp
-                all_tools = self.mcp._tool_manager._tools
-                auto_tools = {
-                    tool: all_tools[tool]
-                    for tool in all_tools
-                    if "auto" in all_tools[tool].tags
-                }
                 if args.tool_mode == "auto":
-                    all_tools = self.mcp._tool_manager._tools
-                    self.mcp._tool_manager._all_tools = all_tools
-                    self.mcp._tool_manager._tools = auto_tools
+                    for tool in self.mcp._tool_manager._tools:
+                        if "auto" not in self.mcp._tool_manager._tools[tool].tags:
+                            self.mcp._tool_manager._tools[tool].disable()
                 else:
-                    for name in auto_tools:
-                        self.mcp._tool_manager.remove_tool(name)
+                    for tool in self.mcp._tool_manager._tools:
+                        if "auto" in self.mcp._tool_manager._tools[tool].tags:
+                            self.mcp._tool_manager._tools[tool].disable()
         elif self.mcp is not None:
             pass
         else:
