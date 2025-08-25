@@ -1,4 +1,4 @@
-from pydantic import Field, field_validator, ValidationInfo, BaseModel
+from pydantic import Field, field_validator, ValidationInfo, BaseModel, model_validator
 from typing import Optional, Union, List, Dict, Any, Literal
 
 
@@ -56,6 +56,14 @@ class TSNEParam(BaseModel):
         if v.lower() not in valid_metrics:
             raise ValueError(f"metric must be one of {valid_metrics}")
         return v.lower()
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class UMAPParam(BaseModel):
@@ -137,6 +145,14 @@ class UMAPParam(BaseModel):
             raise ValueError("method must be either 'umap' or 'rapids'")
         return v.lower()
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class DrawGraphParam(BaseModel):
     """Input schema for the force-directed graph drawing tool."""
@@ -181,6 +197,14 @@ class DrawGraphParam(BaseModel):
             raise ValueError("must be a positive integer")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class DiffMapParam(BaseModel):
     """Input schema for the Diffusion Maps dimensionality reduction tool."""
@@ -205,6 +229,14 @@ class DiffMapParam(BaseModel):
         if v <= 0:
             raise ValueError("n_comps must be a positive integer")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class EmbeddingDensityParam(BaseModel):
@@ -235,6 +267,14 @@ class EmbeddingDensityParam(BaseModel):
         if v is not None and isinstance(v, list) and len(v) > 2:
             raise ValueError("components is limited to two dimensions")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class LeidenParam(BaseModel):
@@ -304,6 +344,14 @@ class LeidenParam(BaseModel):
             raise ValueError("flavor must be either 'leidenalg' or 'igraph'")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class LouvainParam(BaseModel):
     """Input schema for the Louvain clustering algorithm."""
@@ -371,6 +419,14 @@ class LouvainParam(BaseModel):
         if v not in ["vtraag", "igraph", "rapids"]:
             raise ValueError("flavor must be one of 'vtraag', 'igraph', or 'rapids'")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class DendrogramParam(BaseModel):
@@ -445,6 +501,14 @@ class DendrogramParam(BaseModel):
             raise ValueError("n_pcs must be a non-negative integer")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class DPTParam(BaseModel):
     """Input schema for the Diffusion Pseudotime (DPT) tool."""
@@ -491,6 +555,14 @@ class DPTParam(BaseModel):
             raise ValueError("min_group_size must be between 0 and 1")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class PAGAParam(BaseModel):
     """Input schema for the Partition-based Graph Abstraction (PAGA) tool."""
@@ -517,6 +589,14 @@ class PAGAParam(BaseModel):
         if v not in ["v1.2", "v1.0"]:
             raise ValueError("model must be either 'v1.2' or 'v1.0'")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class IngestParam(BaseModel):
@@ -570,6 +650,14 @@ class IngestParam(BaseModel):
         if v.lower() != "knn":
             raise ValueError("labeling_method must be 'knn'")
         return v.lower()
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class RankGenesGroupsParam(BaseModel):
@@ -649,6 +737,14 @@ class RankGenesGroupsParam(BaseModel):
             raise ValueError("n_genes must be a positive integer")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class FilterRankGenesGroupsParam(BaseModel):
     """Input schema for filtering ranked genes groups."""
@@ -709,6 +805,14 @@ class FilterRankGenesGroupsParam(BaseModel):
         if v <= 0:
             raise ValueError("min_fold_change must be a positive number")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class MarkerGeneOverlapParam(BaseModel):
@@ -785,6 +889,14 @@ class MarkerGeneOverlapParam(BaseModel):
             raise ValueError("adj_pval_threshold must be between 0 and 1")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class ScoreGenesParam(BaseModel):
     """Input schema for the score_genes tool that calculates gene scores based on average expression."""
@@ -821,6 +933,14 @@ class ScoreGenesParam(BaseModel):
         if v <= 0:
             raise ValueError("must be a positive integer")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class ScoreGenesCellCycleParam(BaseModel):
@@ -864,6 +984,14 @@ class ScoreGenesCellCycleParam(BaseModel):
         if v <= 0:
             raise ValueError("n_bins must be a positive integer")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class PCAParam(BaseModel):
@@ -915,3 +1043,11 @@ class PCAParam(BaseModel):
         if v is not None and v <= 0:
             raise ValueError("must be a positive integer")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data

@@ -1,5 +1,5 @@
 from typing import Optional, Union, List, Literal, Tuple, Mapping
-from pydantic import Field, field_validator, BaseModel
+from pydantic import Field, field_validator, BaseModel, model_validator
 
 
 # 创建 Mixin 类处理特定功能
@@ -67,7 +67,13 @@ class BaseVisualizationParam(
 ):
     """基础可视化模型，包含所有可视化工具共享的字段"""
 
-    pass
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 # 基础嵌入可视化模型，包含所有嵌入可视化工具共享的字段
@@ -566,6 +572,14 @@ class ClusterMapParam(BaseModel):
         default=None,
         description="Whether to use `raw` attribute of `adata`. Defaults to `True` if `.raw` is present.",
     )
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 # 重构 StackedViolinParam

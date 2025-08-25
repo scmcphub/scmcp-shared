@@ -1,4 +1,4 @@
-from pydantic import Field, field_validator, BaseModel
+from pydantic import Field, field_validator, BaseModel, model_validator
 
 from typing import Optional, Union, List, Dict, Any
 from typing import Literal
@@ -28,12 +28,13 @@ class FilterCells(BaseModel):
         description="Maximum number of genes expressed required for a cell to pass filtering.",
     )
 
-    @field_validator("min_counts", "min_genes", "max_counts", "max_genes")
-    def validate_positive_integers(cls, v: Optional[int]) -> Optional[int]:
-        """验证整数参数为正数"""
-        if v is not None and v <= 0:
-            raise ValueError("过滤参数必须是正整数")
-        return v
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class FilterGenes(BaseModel):
@@ -59,12 +60,13 @@ class FilterGenes(BaseModel):
         description="Maximum number of cells expressed required for a gene to pass filtering.",
     )
 
-    @field_validator("min_counts", "min_cells", "max_counts", "max_cells")
-    def validate_positive_integers(cls, v: Optional[int]) -> Optional[int]:
-        """验证整数参数为正数"""
-        if v is not None and v <= 0:
-            raise ValueError("must be positive_integers")
-        return v
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class SubsetCellParam(BaseModel):
@@ -177,14 +179,13 @@ class CalculateQCMetrics(BaseModel):
         description="Set to False to skip computing log1p transformed annotations.",
     )
 
-    @field_validator("percent_top")
-    def validate_percent_top(cls, v: Optional[List[int]]) -> Optional[List[int]]:
-        """验证 percent_top 中的值为正整数"""
-        if v is not None:
-            for rank in v:
-                if not isinstance(rank, int) or rank <= 0:
-                    raise ValueError("percent_top 中的所有值必须是正整数")
-        return v
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class Log1PParam(BaseModel):
@@ -211,12 +212,13 @@ class Log1PParam(BaseModel):
 
     obsm: Optional[str] = Field(default=None, description="Entry of obsm to transform.")
 
-    @field_validator("chunk_size")
-    def validate_chunk_size(cls, v: Optional[int]) -> Optional[int]:
-        """Validate chunk_size is positive integer"""
-        if v is not None and v <= 0:
-            raise ValueError("chunk_size must be a positive integer")
-        return v
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class HighlyVariableGenesParam(BaseModel):
@@ -270,19 +272,13 @@ class HighlyVariableGenesParam(BaseModel):
         default=True, description="Check if counts are integers for seurat_v3 flavor."
     )
 
-    @field_validator("n_top_genes", "n_bins")
-    def validate_positive_integers(cls, v: Optional[int]) -> Optional[int]:
-        """Validate positive integers"""
-        if v is not None and v <= 0:
-            raise ValueError("must be a positive integer")
-        return v
-
-    @field_validator("span")
-    def validate_span(cls, v: float) -> float:
-        """Validate span is between 0 and 1"""
-        if v <= 0 or v >= 1:
-            raise ValueError("span must be between 0 and 1")
-        return v
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class RegressOutParam(BaseModel):
@@ -298,21 +294,13 @@ class RegressOutParam(BaseModel):
         default=None, description="Number of jobs for parallel computation.", gt=0
     )
 
-    @field_validator("n_jobs")
-    def validate_n_jobs(cls, v: Optional[int]) -> Optional[int]:
-        """Validate n_jobs is positive integer"""
-        if v is not None and v <= 0:
-            raise ValueError("n_jobs must be a positive integer")
-        return v
-
-    @field_validator("keys")
-    def validate_keys(cls, v: Union[str, List[str]]) -> Union[str, List[str]]:
-        """Ensure keys is either a string or list of strings"""
-        if isinstance(v, str):
-            return v
-        elif isinstance(v, list) and all(isinstance(item, str) for item in v):
-            return v
-        raise ValueError("keys must be a string or list of strings")
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class ScaleParam(BaseModel):
@@ -341,12 +329,13 @@ class ScaleParam(BaseModel):
         description="Boolean mask or string referring to obs column for subsetting observations.",
     )
 
-    @field_validator("max_value")
-    def validate_max_value(cls, v: Optional[float]) -> Optional[float]:
-        """Validate max_value is positive if provided"""
-        if v is not None and v <= 0:
-            raise ValueError("max_value must be positive if provided")
-        return v
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class CombatParam(BaseModel):
@@ -362,20 +351,13 @@ class CombatParam(BaseModel):
         description="Additional covariates besides the batch variable such as adjustment variables or biological condition.",
     )
 
-    @field_validator("key")
-    def validate_key(cls, v: str) -> str:
-        """Validate key is not empty"""
-        if not v.strip():
-            raise ValueError("key cannot be empty")
-        return v
-
-    @field_validator("covariates")
-    def validate_covariates(cls, v: Optional[List[str]]) -> Optional[List[str]]:
-        """Validate covariates are non-empty strings if provided"""
-        if v is not None:
-            if not all(isinstance(item, str) and item.strip() for item in v):
-                raise ValueError("covariates must be non-empty strings")
-        return v
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class ScrubletParam(BaseModel):
@@ -487,6 +469,14 @@ class ScrubletParam(BaseModel):
             raise ValueError(f"knn_dist_metric must be one of {valid_metrics}")
         return v.lower()
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class NeighborsParam(BaseModel):
     """Input schema for the neighbors graph construction tool."""
@@ -556,6 +546,14 @@ class NeighborsParam(BaseModel):
             raise ValueError("transformer must be either 'pynndescent' or 'rapids'")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class NormalizeTotalParam(BaseModel):
     """Input schema for the normalize_total preprocessing tool."""
@@ -614,3 +612,11 @@ class NormalizeTotalParam(BaseModel):
         if v <= 0 or v > 1:
             raise ValueError("max_fraction must be between 0 and 1")
         return v
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data

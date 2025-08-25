@@ -72,6 +72,14 @@ class ReadParam(BaseModel):
             raise ValueError("var_names must be either 'gene_symbols' or 'gene_ids'")
         return v
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class WriteParam(BaseModel):
     """Input schema for the write tool."""
@@ -90,14 +98,17 @@ class WriteParam(BaseModel):
         default=None, description="Compression options for h5 files."
     )
 
-    @field_validator("filename")
-    def validate_filename(cls, v: str) -> str:
-        # Allow any filename since the extension is optional and can be inferred
-        return v
-
     @model_validator(mode="after")
     def validate_extension_compression(self) -> "WriteParam":
         # If ext is provided and not h5, compression should be None
         if self.ext is not None and self.ext != "h5" and self.compression is not None:
             raise ValueError("Compression can only be used with h5 files")
         return self
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data

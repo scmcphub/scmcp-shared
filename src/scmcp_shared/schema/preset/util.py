@@ -1,4 +1,4 @@
-from pydantic import Field, BaseModel
+from pydantic import Field, BaseModel, model_validator
 from typing import Optional, List, Dict, Any, Literal
 
 
@@ -22,6 +22,14 @@ class MarkVarParam(BaseModel):
         default=None, description="Gene class type (Mitochondrion/Ribosomal/Hemoglobin)"
     )
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class ListVarParam(BaseModel):
     """ListVarModel"""
@@ -39,6 +47,14 @@ class VarNamesParam(BaseModel):
     """ListObsModel"""
 
     var_names: List[str] = Field(default=None, description="gene names.")
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
 
 
 class ConcatBaseParam(BaseModel):
@@ -81,6 +97,14 @@ class ConcatBaseParam(BaseModel):
         description="Whether pairwise elements along the concatenated dimension should be included.",
     )
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class DPTIROOTParam(BaseModel):
     """Input schema for setting the root cell for diffusion pseudotime."""
@@ -96,6 +120,14 @@ class DPTIROOTParam(BaseModel):
         description="use the minimum or maximum value along the selected dimension to identify the root cell."
     )
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class CelltypeMapCellTypeParam(BaseModel):
     """Input schema for mapping cluster IDs to cell type names."""
@@ -110,14 +142,38 @@ class CelltypeMapCellTypeParam(BaseModel):
         default=None, description="a list of new cell type names."
     )
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class AddLayerParam(BaseModel):
     """Input schema for adding a layer to AnnData object."""
 
     layer_name: str = Field(description="Name of the layer to add to adata.layers.")
 
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
+
 
 class QueryOpLogParam(BaseModel):
     """QueryOpLogModel"""
 
     n: int = Field(default=10, description="Number of operations to return.")
+
+    @model_validator(mode="before")
+    def validate_input(cls, data: dict) -> dict:
+        if isinstance(data, str):
+            raise ValueError(
+                f"Don't send a string, the request input is a json object, the schema of request is: {cls.model_json_schema()}"
+            )
+        return data
