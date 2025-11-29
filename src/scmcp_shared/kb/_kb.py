@@ -1,8 +1,8 @@
-from agno.document.chunking.agentic import AgenticChunking
-from agno.embedder.openai import OpenAIEmbedder
+from agno.knowledge.chunking.agentic import AgenticChunking
+from agno.knowledge.embedder.openai import OpenAIEmbedder
 from agno.models.deepseek import DeepSeek
 from agno.vectordb.lancedb import LanceDb
-from agno.knowledge.agent import AgentKnowledge
+from agno.knowledge.knowledge import Knowledge as AgentKnowledge
 import os
 import requests
 import zipfile
