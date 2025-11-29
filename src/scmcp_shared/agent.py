@@ -48,7 +48,7 @@ def rag_agent(task, software="scmcp"):
 def select_tool(query):
     agent = Agent(
         model=model,
-        response_model=ToolList,
+        output_schema=ToolList,
         use_json_mode=True,
         instructions="""
         you are a bioinformatician, you are given a task and a list of tools, you need to select the most directly relevant tools to use to solve the task，
